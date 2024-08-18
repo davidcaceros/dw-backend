@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Rol {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rol_seq")
-    @SequenceGenerator(name = "rol_seq", sequenceName = "SEQ_ROL", allocationSize = 1)
+    @SequenceGenerator(name = "rol_seq", sequenceName = "\"SEQ_ROL\"", allocationSize = 1)
     @Column(name = "ID_ROL")
     private Integer idRol;
 
