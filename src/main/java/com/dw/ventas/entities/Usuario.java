@@ -6,38 +6,34 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "USUARIO")
+@Table(name = "\"USUARIO\"")
 @Data
 @Builder
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
 public class Usuario {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usuario_seq")
+    @SequenceGenerator(name = "usuario_seq", sequenceName = "SEQ_USUARIO", allocationSize = 1)
+    @Column(name = "ID_USUARIO")
+    private Integer idUsuario;
 
     @ManyToOne
-    @JoinColumn(name = "id_rol")
-    private Rol rol;
+    @JoinColumn(name = "ID_PERSONA")
+    private Persona persona;
 
-    private String nombre;
-    private String apellido;
-    @Column(nullable = false)
-    private String email;
-    private String dpi;
-    private String telefono;
-    private String contraseña;
+    @Column(name = "CONSTRASENA", length = 255)
+    private String constrasena;
 
-    @Column(name = "fecha_creacion")
+    @Column(name = "ESTADO")
+    private Boolean estado;
+
+    @Column(name = "FECHA_CREACION")
     private LocalDateTime fechaCreacion;
 
-    @Column(name = "fecha_actualizacion")
+    @Column(name = "FECHA_ACTUALIZACION")
     private LocalDateTime fechaActualizacion;
-
-    @Column(nullable = false)
-    private boolean enabled;
 }

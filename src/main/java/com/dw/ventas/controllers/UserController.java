@@ -12,12 +12,9 @@ import java.util.List;
 @RequestMapping("api/users")
 public class UserController {
     private final UsuarioService usuarioService;
+
     public UserController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
-    }
-    @GetMapping()
-    public List<UsuarioResponse> getUsuarios(@RequestParam(value = "slug", required = false) final String slug) {
-        return usuarioService.getUsers(slug);
     }
 
     @GetMapping("/{id}")
@@ -25,8 +22,13 @@ public class UserController {
         return usuarioService.getUserById(id);
     }
 
+    @GetMapping()
+    public List<UsuarioResponse> getUsuarios() {
+        return usuarioService.getUsers();
+    }
+
     @PutMapping()
     public UsuarioResponse updateUsuario(@RequestBody final UsuarioRequest usuarioRequest) {
-        return usuarioService.updateUser(usuarioRequest);
+        return null;
     }
 }

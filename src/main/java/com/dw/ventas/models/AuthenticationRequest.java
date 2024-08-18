@@ -5,12 +5,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class AuthenticationReq {
+public class AuthenticationRequest {
     private static final long serialVersionUID = 1L;
+
+    @NotBlank(message = "Username is mandatory")
     private String usuario;
-    private String clave;
+
+    @NotBlank(message = "Password is mandatory")
+    private String contrasena;
 }

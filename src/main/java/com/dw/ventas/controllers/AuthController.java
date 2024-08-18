@@ -2,9 +2,9 @@ package com.dw.ventas.controllers;
 
 import com.dw.ventas.services.JwtUtilService;
 import com.dw.ventas.services.UsuarioService;
-import com.dw.ventas.models.AuthenticationReq;
+import com.dw.ventas.models.AuthenticationRequest;
 import com.dw.ventas.models.TokenResponse;
-import com.dw.ventas.models.UsuarioDTO;
+import com.dw.ventas.models.NuevoUsuarioRequest;
 import com.dw.ventas.models.UsuarioResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,22 +39,26 @@ public class AuthController {
         this.jwtUtilService = jwtUtilService;
     }
 
-    @PostMapping("/registro")
-    public ResponseEntity<?> registrarUsuario(@Valid @RequestBody final UsuarioDTO usuarioDTO) {
-        usuarioService.registrarUsuario(usuarioDTO);
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody final NuevoUsuarioRequest nuevoUsuarioRequest) {
+        usuarioService.registerUser(nuevoUsuarioRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> autenticacion(@RequestBody AuthenticationReq authenticationReq) {
-        logger.info("Autenticando al usuario {}", authenticationReq.getUsuario());
+    public ResponseEntity<?> authentication(@Valid @RequestBody final AuthenticationRequest authenticationRequest, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+        }
+
+        logger.info("Autenticando al usuario {}", authenticationRequest.getUsuario());
 
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authenticationReq.getUsuario(),
-                            authenticationReq.getClave()));
+                    new UsernamePasswordAuthenticationToken(authenticationRequest.getUsuario(),
+                            authenticationRequest.getContrasena()));
 
         final UserDetails userDetails = usuarioService.loadUserByUsername(
-                authenticationReq.getUsuario());
+                authenticationRequest.getUsuario());
 
         final String jwt = jwtUtilService.generateToken(userDetails);
 
@@ -65,5 +70,4 @@ public class AuthController {
                 .build();
         return ResponseEntity.ok(tokenResponse);
     }
-
 }

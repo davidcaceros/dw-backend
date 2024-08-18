@@ -42,18 +42,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                //.httpBasic(withDefaults())  // (1)
-                .csrf().disable() // (2)
+        http.csrf().disable()
                 .authorizeRequests()
-//                .antMatchers("/publico/**").permitAll()
                 .antMatchers("/api/auth/**").permitAll()
-//                .antMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and().cors()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
@@ -61,34 +56,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(usuarioDetailsService);
-
-    /*
-    auth
-        .inMemoryAuthentication()
-        .withUser("jcabelloc").password("{noop}" + "secreto").roles("USER")
-        .and()
-        .withUser("mlopez").password("{noop}" + "secreto").roles("ADMIN");
-     */
     }
 
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("http://localhost:3000"); // Reemplaza con la URL de tu aplicación en localhost
+        config.addAllowedOrigin("http://localhost:3000"); // Reemplazar con la URL que consumira los servicios,
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
-
-
-
-    /*
-     * (1) Spring Security’s HTTP Basic Authentication support in is enabled by default. However, as soon as any servlet
-     * based configuration is provided, HTTP Basic must be explicitly provided.
-     * (2) If our stateless API uses token-based authentication, such as JWT, we don't need CSRF protection
-     *
-     *
-     * */
 }

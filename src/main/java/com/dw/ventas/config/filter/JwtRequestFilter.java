@@ -19,6 +19,8 @@ import java.io.IOException;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
+    private static final String HEADER = "Authorization";
+    private static final String TOKEN_PREFIX = "Bearer ";
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -30,16 +32,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        final String authorizationHeader = request.getHeader("Authorization");
+        final String authorizationHeader = request.getHeader(HEADER);
 
         String username = null;
         String jwt = null;
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {
             jwt = authorizationHeader.substring(7);
             username = jwtUtilService.extractUsername(jwt);
         }
-
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 

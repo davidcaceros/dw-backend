@@ -2,20 +2,30 @@ package com.dw.ventas.entities;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-@Getter
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "\"ROL\"")
+@Data
 @Builder
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 public class Rol {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rol_seq")
+    @SequenceGenerator(name = "rol_seq", sequenceName = "SEQ_ROL", allocationSize = 1)
+    @Column(name = "ID_ROL")
+    private Integer idRol;
+
+    @Column(name = "NOMBRE", length = 25)
     private String nombre;
+
+    @Column(name = "SLUG", length = 25)
     private String slug;
-    private String descripcion;
+
+    @Column(name = "FECHA_CREACION")
+    private LocalDateTime fechaCreacion;
 }

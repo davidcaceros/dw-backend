@@ -8,13 +8,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class UsuarioResponse {
-    private Long id;
+    private Integer idUsuario;
     private String nombre;
     private String apellido;
-    private String dpi;
-    private String email;
-    private String telefono;
-    private Long rolId;
-    private String rolSlug;
-    private Boolean enabled;
+    private String correo;
 }
