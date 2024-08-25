@@ -1,44 +1,44 @@
-------------------------------------------------------------- ROL -----------------------------------------------------------------------------
-CREATE SEQUENCE "SEQ_ROL" START 1;
+------------------------------------------------------------- rol -----------------------------------------------------------------------------
+CREATE SEQUENCE "seq_rol" START 1;
 
-CREATE TABLE "ROL" (
-    "ID_ROL" INT DEFAULT NEXTVAL('"SEQ_ROL"') PRIMARY KEY,
-    "NOMBRE" VARCHAR(25),
-    "SLUG" VARCHAR(25),
-    "FECHA_CREACION" TIMESTAMP
+CREATE TABLE "rol" (
+    "id_rol" INT DEFAULT NEXTVAL('"seq_rol"') PRIMARY KEY,
+    "nombre" VARCHAR(25),
+    "slug" VARCHAR(25),
+    "fecha_creacion" TIMESTAMP
 );
-------------------------------------------------------------- PERSONA -----------------------------------------------------------------------------
-CREATE SEQUENCE "SEQ_PERSONA" START 100;
+------------------------------------------------------------- persona -----------------------------------------------------------------------------
+CREATE SEQUENCE "seq_persona" START 100;
 
-CREATE TABLE "PERSONA" (
-    "ID_PERSONA" INT DEFAULT NEXTVAL('"SEQ_PERSONA"') PRIMARY KEY,
-    "PRIMER_NOMBRE" VARCHAR(25) NOT NULL,
-    "SEGUNDO_NOMBRE" VARCHAR(25),
-    "PRIMER_APELLIDO" VARCHAR(25) NOT NULL,
-    "SEGUNDO_APELLIDO" VARCHAR(25),
-    "APELLIDO_CASADA" VARCHAR(25),
-    "DPI" VARCHAR(14) NOT NULL,
-    "NIT" VARCHAR(25),
-    "PASAPORTE" VARCHAR(20),
-    "TELEFONO" VARCHAR(9) NOT NULL,
-    "CORREO" VARCHAR(50) UNIQUE,
-    "DIRECCION" VARCHAR(100) NOT NULL,
-    "ESTADO" VARCHAR(32) NOT NULL,
-    "ID_ROL" INT,
-    "FECHA_CREACION" TIMESTAMP,
-    "FECHA_ACTUALIZACION" TIMESTAMP,
-    CONSTRAINT "ROL_PERSONA_FK" FOREIGN KEY ("ID_ROL") REFERENCES "ROL" ("ID_ROL")
+CREATE TABLE "persona" (
+    "id_persona" INT DEFAULT NEXTVAL('"seq_persona"') PRIMARY KEY,
+    "primer_nombre" VARCHAR(25) NOT NULL,
+    "segundo_nombre" VARCHAR(25),
+    "primer_apellido" VARCHAR(25) NOT NULL,
+    "segundo_apellido" VARCHAR(25),
+    "apellido_casada" VARCHAR(25),
+    "dpi" VARCHAR(14) NOT NULL,
+    "nit" VARCHAR(25),
+    "pasaporte" VARCHAR(20),
+    "telefono" VARCHAR(9) NOT NULL,
+    "correo" VARCHAR(50) NOT NULL UNIQUE,
+    "direccion" VARCHAR(100) NOT NULL,
+    "estado" VARCHAR(32) NOT NULL,
+    "id_rol" INT,
+    "categoria" VARCHAR(20),
+    "fecha_creacion" TIMESTAMP,
+    "fecha_actualizacion" TIMESTAMP,
+    CONSTRAINT "rol_persona_fk" FOREIGN KEY ("id_rol") REFERENCES "rol" ("id_rol")
 );
-------------------------------------------------------------- USUARIO -----------------------------------------------------------------------------
-CREATE SEQUENCE "SEQ_USUARIO" START 100;
+------------------------------------------------------------- usuario -----------------------------------------------------------------------------
+CREATE SEQUENCE "seq_usuario" START 100;
 
-CREATE TABLE "USUARIO" (
-    "ID_USUARIO" INT DEFAULT NEXTVAL('"SEQ_USUARIO"') PRIMARY KEY,
-    "ID_PERSONA" INT,
-    "CONSTRASENIA" VARCHAR(255),
-    "ACTIVO" BOOLEAN,
-    "FECHA_CREACION" TIMESTAMP,
-    "FECHA_ACTUALIZACION" TIMESTAMP,
-    CONSTRAINT "PERSONA_USUARIO_FK" FOREIGN KEY ("ID_PERSONA") REFERENCES "PERSONA" ("ID_PERSONA")
+CREATE TABLE "usuario" (
+    "id_usuario" INT DEFAULT NEXTVAL('"seq_usuario"') PRIMARY KEY,
+    "id_persona" INT,
+    "contrasena" VARCHAR(255),
+    "activo" BOOLEAN,
+    "fecha_creacion" TIMESTAMP,
+    "fecha_actualizacion" TIMESTAMP,
+    CONSTRAINT "persona_usuario_fk" FOREIGN KEY ("id_persona") REFERENCES "persona" ("id_persona")
 );
-

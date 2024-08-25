@@ -18,17 +18,17 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UsuarioResponse getUsuario(@PathVariable final Long id) {
+    public UsuarioResponse getById(@PathVariable final Integer id) {
         return usuarioService.getUserById(id);
     }
 
     @GetMapping()
-    public List<UsuarioResponse> getUsuarios() {
+    public List<UsuarioResponse> getAll() {
         return usuarioService.getUsers();
     }
 
     @PutMapping()
-    public UsuarioResponse updateUsuario(@RequestBody final UsuarioRequest usuarioRequest) {
+    public UsuarioResponse udpate(@RequestBody final UsuarioRequest usuarioRequest) {
         return null;
     }
 }

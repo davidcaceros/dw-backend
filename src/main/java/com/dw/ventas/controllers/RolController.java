@@ -4,13 +4,13 @@ import com.dw.ventas.entities.Rol;
 import com.dw.ventas.models.RolRequest;
 import com.dw.ventas.services.RolService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/rol")
+@RequestMapping("/api/roles")
 public class RolController {
     private final RolService rolService;
 
@@ -20,7 +20,12 @@ public class RolController {
     }
 
     @PostMapping
-    public Rol create(@RequestBody RolRequest rol) {
+    public Rol create(@Valid @RequestBody RolRequest rol) {
         return rolService.createRol(rol);
+    }
+
+    @GetMapping
+    List<Rol> getAll() {
+        return rolService.getRoles();
     }
 }

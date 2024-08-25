@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "\"USUARIO\"")
+@Table(name = "usuario")
 @Data
 @Builder
 @Setter
@@ -17,23 +17,23 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usuario_seq")
-    @SequenceGenerator(name = "usuario_seq", sequenceName = "\"SEQ_USUARIO\"", allocationSize = 1)
-    @Column(name = "ID_USUARIO")
+    @SequenceGenerator(name = "usuario_seq", sequenceName = "seq_usuario", allocationSize = 1)
+    @Column(name = "id_usuario")
     private Integer idUsuario;
 
     @ManyToOne
-    @JoinColumn(name = "ID_PERSONA")
+    @JoinColumn(name = "id_persona")
     private Persona persona;
 
-    @Column(name = "CONSTRASENA", length = 255)
-    private String constrasena;
+    @Column(name = "contrasena")
+    private String contrasena;
 
-    @Column(name = "ESTADO")
-    private Boolean estado;
+    @Column(name = "activo")
+    private Boolean activo;
 
-    @Column(name = "FECHA_CREACION")
+    @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion;
 
-    @Column(name = "FECHA_ACTUALIZACION")
+    @Column(name = "fecha_actualizacion")
     private LocalDateTime fechaActualizacion;
 }

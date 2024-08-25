@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class RolService {
@@ -27,5 +28,9 @@ public class RolService {
                 .build();
 
         return rolRepository.save(rol);
+    }
+
+    public List<Rol> getRoles() {
+        return rolRepository.findAll();
     }
 }

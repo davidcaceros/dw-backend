@@ -2,6 +2,8 @@ package com.dw.ventas.config.filter;
 
 
 import com.dw.ventas.services.JwtUtilService;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,7 +41,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {
             jwt = authorizationHeader.substring(7);
-            username = jwtUtilService.extractUsername(jwt);
+            try {
+                username = jwtUtilService.extractUsername(jwt);
+            } catch (IllegalArgumentException e) {
+                logger.warn("Unable to get JWT Token: " + e.getMessage());
+            } catch (ExpiredJwtException e) {
+                logger.warn("JWT Token has expired: " + e.getMessage());
+            } catch (MalformedJwtException e) {
+                logger.warn("Invalid JWT Token: " + e.getMessage());
+            }
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

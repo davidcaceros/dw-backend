@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class JwtUtilService {
-    // LLAVE_MUY_SECRETA => [Base64] => TExBVkVfTVVZX1NFQ1JFVEE=
     private static final String JWT_SECRET_KEY = "c02b5b7d6dc1cdf4aaa9d477bc476125fb93cca058a5d0a2d39033ee6f9beeff";
 
     public static final long JWT_TOKEN_VALIDITY = 1000 * 60 * 60 * (long) 8; // 8 Horas

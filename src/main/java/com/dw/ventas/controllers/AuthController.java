@@ -1,24 +1,20 @@
 package com.dw.ventas.controllers;
 
+import com.dw.ventas.exception.impl.BadRequestException;
+import com.dw.ventas.models.*;
 import com.dw.ventas.services.JwtUtilService;
 import com.dw.ventas.services.UsuarioService;
-import com.dw.ventas.models.AuthenticationRequest;
-import com.dw.ventas.models.TokenResponse;
-import com.dw.ventas.models.NuevoUsuarioRequest;
-import com.dw.ventas.models.UsuarioResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -29,37 +25,44 @@ public class AuthController {
     private final UsuarioService usuarioService;
     private final AuthenticationManager authenticationManager;
     private final JwtUtilService jwtUtilService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public AuthController(UsuarioService usuarioService,
                           AuthenticationManager authenticationManager,
-                          JwtUtilService jwtUtilService) {
+                          JwtUtilService jwtUtilService, PasswordEncoder passwordEncoder) {
         this.usuarioService = usuarioService;
         this.authenticationManager = authenticationManager;
         this.jwtUtilService = jwtUtilService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody final NuevoUsuarioRequest nuevoUsuarioRequest) {
-        usuarioService.registerUser(nuevoUsuarioRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public RegisterResponse register(@RequestBody @Valid final RegisterRequest registerRequest) {
+        return usuarioService.registerUser(registerRequest, passwordEncoder.encode(registerRequest.getContrasena()));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> authentication(@Valid @RequestBody final AuthenticationRequest authenticationRequest, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<?> login(@RequestBody @Valid final AuthenticationRequest authenticationRequest) {
+
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authenticationRequest.getUsuario(),
+                            authenticationRequest.getContrasena()));
+        } catch (BadCredentialsException exception) {
+            throw new BadRequestException.Builder()
+                    .errorMessageKey("Usuario o contrasena invalido")
+                    .errorMessageArgs(exception)
+                    .cause(exception)
+                    .build();
         }
 
         logger.info("Autenticando al usuario {}", authenticationRequest.getUsuario());
 
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authenticationRequest.getUsuario(),
-                            authenticationRequest.getContrasena()));
-
         final UserDetails userDetails = usuarioService.loadUserByUsername(
                 authenticationRequest.getUsuario());
-
         final String jwt = jwtUtilService.generateToken(userDetails);
 
         final UsuarioResponse usuarioResponse = usuarioService.getUserByEmail(userDetails.getUsername());

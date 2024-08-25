@@ -3,10 +3,9 @@ package com.dw.ventas.services;
 import com.dw.ventas.entities.Persona;
 import com.dw.ventas.entities.Usuario;
 import com.dw.ventas.exception.impl.ResourceNotFoundException;
-import com.dw.ventas.models.NuevoUsuarioRequest;
+import com.dw.ventas.models.RegisterRequest;
+import com.dw.ventas.models.RegisterResponse;
 import com.dw.ventas.models.UsuarioResponse;
-import com.dw.ventas.repositories.PersonaRepository;
-import com.dw.ventas.repositories.RolRepository;
 import com.dw.ventas.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -14,7 +13,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,22 +37,30 @@ public class UsuarioService implements UserDetailsService {
     }
 
     @Transactional
-    public void registerUser(final NuevoUsuarioRequest usuarioRequest) {
+    public RegisterResponse registerUser(final RegisterRequest usuarioRequest, String encode) {
+
         final Persona personaSaved = personaService.registerPersona(usuarioRequest);
+
         final LocalDateTime now = LocalDateTime.now();
 
         final Usuario usuario = Usuario.builder()
                 .persona(personaSaved)
-                .constrasena(usuarioRequest.getContrasena())
-                .estado(true)
+                .contrasena(encode)
+                .activo(true)
                 .fechaCreacion(now)
                 .fechaActualizacion(now)
                 .build();
 
-        usuarioRepository.save(usuario);
+        final Usuario usuarioSaved = usuarioRepository.save(usuario);
+
+        return RegisterResponse.builder()
+                .idUsuario(usuarioSaved.getIdUsuario())
+                .usuario(usuarioSaved.getPersona().getCorreo())
+                .build();
+
     }
 
-    public UsuarioResponse getUserById(final Long id) {
+    public UsuarioResponse getUserById(final Integer id) {
         final Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> ResourceNotFoundException.builder()
                         .message("The user was not found.")
@@ -90,19 +96,20 @@ public class UsuarioService implements UserDetailsService {
         if (optionalUser.isPresent()) {
             User.UserBuilder userBuilder = User.withUsername(username);
             Usuario usuario = optionalUser.get();
-            userBuilder.password(usuario.getConstrasena()).roles(usuario.getPersona().getRol().getNombre());
+            userBuilder.password(usuario.getContrasena()).roles(usuario.getPersona().getRol().getNombre());
             return userBuilder.build();
         } else {
             throw new UsernameNotFoundException(username);
         }
     }
 
-    private UsuarioResponse usuarioResponseBuilder(final Usuario usuario) {
+    public UsuarioResponse usuarioResponseBuilder(final Usuario usuario) {
         return UsuarioResponse.builder()
                 .idUsuario(usuario.getIdUsuario())
-                .nombre(usuario.getPersona().getPrimerNombre())
-                .apellido(usuario.getPersona().getPrimerApellido())
-                .correo(usuario.getPersona().getCorreo())
+                .activo(usuario.getActivo())
+                .fechaCreacion(usuario.getFechaCreacion().toString())
+                .fechaActualizacion(usuario.getFechaActualizacion().toString())
+                .persona(usuario.getPersona())
                 .build();
     }
 }

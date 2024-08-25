@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "\"ROL\"")
+@Table(name = "rol")
 @Data
 @Builder
 @Setter
@@ -16,16 +16,16 @@ import java.time.LocalDateTime;
 public class Rol {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rol_seq")
-    @SequenceGenerator(name = "rol_seq", sequenceName = "\"SEQ_ROL\"", allocationSize = 1)
-    @Column(name = "ID_ROL")
+    @SequenceGenerator(name = "rol_seq", sequenceName = "seq_rol", allocationSize = 1)
+    @Column(name = "id_rol")
     private Integer idRol;
 
-    @Column(name = "NOMBRE", length = 25)
+    @Column(name = "nombre", length = 25)
     private String nombre;
 
-    @Column(name = "SLUG", length = 25)
+    @Column(name = "slug", length = 25)
     private String slug;
 
-    @Column(name = "FECHA_CREACION")
+    @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion;
 }

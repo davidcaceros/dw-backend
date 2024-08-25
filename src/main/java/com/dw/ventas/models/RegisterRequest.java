@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-public class NuevoUsuarioRequest {
+public class RegisterRequest {
     @NotBlank(message = "Primer nombre es obligatorio")
     @Size(max = 25, message = "El primer nombre no puede exceder los 25 caracteres")
     private String primerNombre;
@@ -48,6 +48,14 @@ public class NuevoUsuarioRequest {
     @NotBlank(message = "Dirección es obligatoria")
     @Size(max = 100, message = "La dirección no puede exceder los 100 caracteres")
     private String direccion;
+
+    @NotBlank(message = "Estado es obligatorio")
+    @Size(max = 32, message = "El estado no puede exceder los 32 caracteres")
+    private String estado;
+
+    @NotBlank(message = "La categoria es obligatorio")
+    @Size(max = 20, message = "La categoria no puede exceder los 20 caracteres")
+    private String categoria;
 
     private Integer idRol;
 

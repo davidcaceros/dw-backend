@@ -8,7 +8,7 @@ import java.util.Map;
 
 @ToString(callSuper = true)
 public class BadRequestException extends AbstractServiceException {
-    private static final String CODE = "025-0900";
+    private static final String CODE = "400";
 
     private BadRequestException(final String message,
                                 final Throwable cause,
