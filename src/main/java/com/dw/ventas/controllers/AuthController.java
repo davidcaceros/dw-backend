@@ -28,9 +28,10 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AuthController(UsuarioService usuarioService,
-                          AuthenticationManager authenticationManager,
-                          JwtUtilService jwtUtilService, PasswordEncoder passwordEncoder) {
+    public AuthController(final UsuarioService usuarioService,
+                          final AuthenticationManager authenticationManager,
+                          final JwtUtilService jwtUtilService,
+                          final PasswordEncoder passwordEncoder) {
         this.usuarioService = usuarioService;
         this.authenticationManager = authenticationManager;
         this.jwtUtilService = jwtUtilService;
@@ -65,7 +66,7 @@ public class AuthController {
                 authenticationRequest.getUsuario());
         final String jwt = jwtUtilService.generateToken(userDetails);
 
-        final UsuarioResponse usuarioResponse = usuarioService.getUserByEmail(userDetails.getUsername());
+        final UsuarioResponse usuarioResponse = usuarioService.findUserByEmail(userDetails.getUsername());
 
         final TokenResponse tokenResponse = TokenResponse.builder()
                 .usuario(usuarioResponse)

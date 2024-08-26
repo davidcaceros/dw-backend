@@ -30,7 +30,7 @@ public class RolService {
         return rolRepository.save(rol);
     }
 
-    public List<Rol> getRoles() {
+    public List<Rol> findAllRoles() {
         return rolRepository.findAll();
     }
 }

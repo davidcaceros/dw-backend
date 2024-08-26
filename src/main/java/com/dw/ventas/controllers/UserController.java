@@ -18,13 +18,13 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UsuarioResponse getById(@PathVariable final Integer id) {
-        return usuarioService.getUserById(id);
+    public UsuarioResponse getUserById(@PathVariable final Integer id) {
+        return usuarioService.findUserById(id);
     }
 
     @GetMapping()
-    public List<UsuarioResponse> getAll() {
-        return usuarioService.getUsers();
+    public List<UsuarioResponse> getAllUsers() {
+        return usuarioService.findAllUsers();
     }
 
     @PutMapping()

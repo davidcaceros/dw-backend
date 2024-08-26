@@ -81,7 +81,7 @@ public class Persona {
     @Column(name = "categoria")
     private String categoria;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_rol")
     private Rol rol;
 

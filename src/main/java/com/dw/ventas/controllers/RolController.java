@@ -20,12 +20,12 @@ public class RolController {
     }
 
     @PostMapping
-    public Rol create(@Valid @RequestBody RolRequest rol) {
+    public Rol createRol(@Valid @RequestBody RolRequest rol) {
         return rolService.createRol(rol);
     }
 
     @GetMapping
-    List<Rol> getAll() {
-        return rolService.getRoles();
+    List<Rol> getAllRoles() {
+        return rolService.findAllRoles();
     }
 }

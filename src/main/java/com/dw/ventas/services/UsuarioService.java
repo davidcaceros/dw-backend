@@ -39,7 +39,7 @@ public class UsuarioService implements UserDetailsService {
     @Transactional
     public RegisterResponse registerUser(final RegisterRequest usuarioRequest, String encode) {
 
-        final Persona personaSaved = personaService.registerPersona(usuarioRequest);
+        final Persona personaSaved = personaService.registerPersonaForUser(usuarioRequest);
 
         final LocalDateTime now = LocalDateTime.now();
 
@@ -60,7 +60,7 @@ public class UsuarioService implements UserDetailsService {
 
     }
 
-    public UsuarioResponse getUserById(final Integer id) {
+    public UsuarioResponse findUserById(final Integer id) {
         final Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> ResourceNotFoundException.builder()
                         .message("The user was not found.")
@@ -71,7 +71,7 @@ public class UsuarioService implements UserDetailsService {
         return usuarioResponseBuilder(usuario);
     }
 
-    public UsuarioResponse getUserByEmail(final String email) {
+    public UsuarioResponse findUserByEmail(final String email) {
         final Usuario usuario = usuarioRepository.findByPersonaCorreo(email)
                 .orElseThrow(() -> ResourceNotFoundException.builder()
                         .message("The user was not found.")
@@ -82,7 +82,7 @@ public class UsuarioService implements UserDetailsService {
         return usuarioResponseBuilder(usuario);
     }
 
-    public List<UsuarioResponse> getUsers() {
+    public List<UsuarioResponse> findAllUsers() {
         final List<Usuario> usuarios = usuarioRepository.findAll();
         return usuarios.stream()
                 .map(this::usuarioResponseBuilder)

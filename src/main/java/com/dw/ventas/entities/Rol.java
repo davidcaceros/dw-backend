@@ -3,6 +3,7 @@ package com.dw.ventas.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
