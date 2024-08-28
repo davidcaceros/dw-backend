@@ -49,7 +49,7 @@ public class PersonaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Persona> updatePersona(@PathVariable Integer id, @Valid @RequestBody PersonaUpdateRequest request) {
-        Persona personaActualizada = personaService.updatePersona(id, request);
+        final Persona personaActualizada = personaService.updatePersona(id, request);
         return ResponseEntity.ok(personaActualizada);
     }
 }
