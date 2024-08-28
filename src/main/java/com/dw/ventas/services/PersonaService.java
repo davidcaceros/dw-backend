@@ -147,6 +147,8 @@ public class PersonaService {
                     .build();
         }
 
+        final LocalDateTime localDateTime = LocalDateTime.now();
+
         final Persona existingPersona = existingPersonaOpt.get();
 
         if (request.getPrimerNombre() != null) {
@@ -172,6 +174,8 @@ public class PersonaService {
         if (request.getCategoria() != null) {
             existingPersona.setCategoria(request.getCategoria());
         }
+
+        existingPersona.setFechaActualizacion(localDateTime);
 
         return personaRepository.save(existingPersona);
     }
