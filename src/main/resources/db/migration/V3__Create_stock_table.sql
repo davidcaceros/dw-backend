@@ -7,6 +7,6 @@ CREATE TABLE stock (
 	existencia INT,
 	fecha_creacion TIMESTAMP NOT NULL,
 	fecha_actualizacion TIMESTAMP,
-	CONSTRAINT pk_stock PRIMARY KEY (idstock),
+	CONSTRAINT pk_stock PRIMARY KEY (id_stock),
 	CONSTRAINT producto_stock_fk FOREIGN KEY (id_producto) REFERENCES producto (id_producto)
 );
