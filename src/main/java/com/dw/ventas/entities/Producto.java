@@ -41,6 +41,7 @@ public class Producto {
     private Date fechaVencimiento;
 
     @Column(name = "activo", nullable = false)
+    @Builder.Default
     private Boolean activo = true;
 
     @Column(name = "fecha_creacion")
