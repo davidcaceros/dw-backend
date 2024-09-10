@@ -1,6 +1,7 @@
 package com.dw.ventas.controllers;
 
 import com.dw.ventas.entities.Stock;
+import com.dw.ventas.models.StockReductionRequest;
 import com.dw.ventas.models.StockRequest;
 import com.dw.ventas.models.StockUpdateRequest;
 import com.dw.ventas.services.StockService;
@@ -46,6 +47,13 @@ public class StockController {
         final Stock stock = stockService.updateStock(id, request);
         return ResponseEntity.ok(stock);
     }
+
+    @PostMapping("/reduce-stock")
+    public ResponseEntity<List<Stock>> reduceStock(@RequestBody List<StockReductionRequest> stockReductionRequests) {
+        List<Stock> updatedStocks = stockService.reduceStockForMultipleProducts(stockReductionRequests);
+        return ResponseEntity.ok(updatedStocks);
+    }
+
 }
 
 
