@@ -278,4 +278,29 @@ public class ServiceExceptionHandler extends ResponseEntityExceptionHandler {
     private String convertFromCamelCaseToSnakeCase(final String text) {
         return text.replaceAll("(.)(\\p{Upper})", "$1_$2").toLowerCase();
     }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<ErrorMessageResource> handleInsufficientStockException(InsufficientStockException exception) {
+        log.debug("InsufficientStockException has been thrown. " + exception, exception);
+
+        final ErrorMessageResource errorMessageResource = getErrorMessageResource(exception);
+
+        String message = "El stock es insuficiente para el producto ";
+        if (exception.getProductName() != null) {
+            message += exception.getProductName() + ". ";
+        }
+        message += "Cantidad en stock: ";
+        if (exception.getAdditionalInformation() != null && exception.getAdditionalInformation().containsKey("existenciaActual")) {
+            message += exception.getAdditionalInformation().get("existenciaActual");
+        } else {
+            message += "No disponible";
+        }
+
+        errorMessageResource.setMessage(message);
+
+        return ResponseEntity
+                .status(BAD_REQUEST)
+                .contentType(APPLICATION_JSON_UTF8)
+                .body(errorMessageResource);
+    }
 }
