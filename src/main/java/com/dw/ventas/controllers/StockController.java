@@ -29,22 +29,22 @@ public class StockController {
         return new ResponseEntity<>(stock, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Stock> getStockById(@PathVariable final Integer id) {
-        final Optional<Stock> stock = stockService.findStockById(id);
-        return stock.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
     @GetMapping()
     public ResponseEntity<List<Stock>> getAllStocks() {
         final List<Stock> stocks = stockService.findAllStocks();
         return ResponseEntity.ok(stocks);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Stock> updateStock(@PathVariable final Integer id,
+    @GetMapping("/producto/{idProducto}")
+    public ResponseEntity<Stock> getStockByProductId(@PathVariable final Integer idProducto) {
+        final Optional<Stock> stock = stockService.findStockByProductId(idProducto);
+        return stock.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/producto/{idProducto}")
+    public ResponseEntity<Stock> updateStock(@PathVariable final Integer idProducto,
                                              @Valid @RequestBody final StockUpdateRequest request) {
-        final Stock stock = stockService.updateStock(id, request);
+        final Stock stock = stockService.updateStock(idProducto, request);
         return ResponseEntity.ok(stock);
     }
 
@@ -53,7 +53,4 @@ public class StockController {
         List<Stock> updatedStocks = stockService.reduceStockForMultipleProducts(stockReductionRequests);
         return ResponseEntity.ok(updatedStocks);
     }
-
 }
-
-
