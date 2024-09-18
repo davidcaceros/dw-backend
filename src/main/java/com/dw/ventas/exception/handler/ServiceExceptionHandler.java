@@ -24,6 +24,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -278,4 +279,41 @@ public class ServiceExceptionHandler extends ResponseEntityExceptionHandler {
     private String convertFromCamelCaseToSnakeCase(final String text) {
         return text.replaceAll("(.)(\\p{Upper})", "$1_$2").toLowerCase();
     }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<ErrorMessageResource> handleInsufficientStockException(InsufficientStockException exception) {
+        log.debug("InsufficientStockException has been thrown. " + exception, exception);
+
+        final ErrorMessageResource errorMessageResource = getErrorMessageResource(exception);
+
+        String message = "El stock es insuficiente para el producto " + exception.getProductName() +
+                ". Cantidad en stock: " + exception.getAdditionalInformation().get("existenciaActual");
+
+        errorMessageResource.setMessage(message);
+
+        return ResponseEntity
+                .status(BAD_REQUEST)
+                .contentType(APPLICATION_JSON_UTF8)
+                .body(errorMessageResource);
+    }
+
+    @ExceptionHandler(MultipleInsufficientStockException.class)
+    public ResponseEntity<ErrorMessageResource> handleMultipleInsufficientStockException(MultipleInsufficientStockException exception) {
+        log.debug("MultipleInsufficientStockException has been thrown. " + exception, exception);
+
+        List<String> messages = new ArrayList<>();
+        for (InsufficientStockException ex : exception.getInsufficientStockExceptions()) {
+            messages.add("El stock es insuficiente para el producto " + ex.getProductName() +
+                    ". Cantidad en stock: " + ex.getAdditionalInformation().get("existenciaActual"));
+        }
+
+        ErrorMessageResource errorMessageResource = new ErrorMessageResource();
+        errorMessageResource.setMessage(String.join(", ", messages));
+
+        return ResponseEntity
+                .status(BAD_REQUEST)
+                .contentType(APPLICATION_JSON_UTF8)
+                .body(errorMessageResource);
+    }
+
 }
