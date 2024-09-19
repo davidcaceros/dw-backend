@@ -36,11 +36,15 @@ public class Producto {
     @Column(name = "codigo_proveedor")
     private Integer codigoProveedor;
 
+    @Column(name = "precio")
+    private Double precio;
+
     @Temporal(TemporalType.DATE)
     @Column(name = "fecha_vencimiento")
     private Date fechaVencimiento;
 
     @Column(name = "activo", nullable = false)
+    @Builder.Default
     private Boolean activo = true;
 
     @Column(name = "fecha_creacion")

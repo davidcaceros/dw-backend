@@ -25,6 +25,9 @@ public class ProductoRequest {
     private Integer existenciaMinima;
 
     @NotNull
+    private Double precio;
+
+    @NotNull
     private Integer codigoProveedor;
 
     private Date fechaVencimiento;}
