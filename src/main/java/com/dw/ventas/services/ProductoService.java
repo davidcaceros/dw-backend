@@ -48,6 +48,7 @@ public class ProductoService {
                 .descripcion(productoRequest.getDescripcion())
                 .ubicacionFisica(productoRequest.getUbicacionFisica())
                 .existenciaMinima(productoRequest.getExistenciaMinima())
+                .precio(productoRequest.getPrecio())
                 .codigoProveedor(proveedorOptional.get().getIdProveedor())
                 .proveedor(proveedorOptional.get())
                 .fechaVencimiento(productoRequest.getFechaVencimiento())
