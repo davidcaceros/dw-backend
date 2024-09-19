@@ -2,7 +2,10 @@ package com.dw.ventas.services;
 
 import com.dw.ventas.entities.Producto;
 import com.dw.ventas.entities.Stock;
+import com.dw.ventas.exception.impl.InsufficientStockException;
+import com.dw.ventas.exception.impl.MultipleInsufficientStockException;
 import com.dw.ventas.exception.impl.ResourceNotFoundException;
+import com.dw.ventas.models.StockReductionRequest;
 import com.dw.ventas.models.StockRequest;
 import com.dw.ventas.models.StockUpdateRequest;
 import com.dw.ventas.repositories.ProductoRepository;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,12 +67,12 @@ public class StockService {
         return stockRepository.findAll();
     }
 
-    public Stock updateStock(final Integer id, final StockUpdateRequest request) {
-        final Optional<Stock> existingStock = stockRepository.findById(id);
+    public Stock updateStock(final Integer idProducto, final StockUpdateRequest request) {
+        final Optional<Stock> existingStock = stockRepository.findByIdProducto(idProducto);
 
         if (existingStock.isEmpty()) {
             throw ResourceNotFoundException.builder()
-                    .errorMessageKey("Stock no encontrado por el id proporcionado.")
+                    .errorMessageKey("Stock no encontrado para el producto con id: " + idProducto)
                     .build();
         }
 
@@ -82,5 +86,49 @@ public class StockService {
         stock.setFechaActualizacion(now);
 
         return stockRepository.save(stock);
+    }
+
+    @Transactional
+    public List<Stock> reduceStockForMultipleProducts(final List<StockReductionRequest> stockReductionRequests) {
+        List<Stock> updatedStocks = new ArrayList<>();
+        List<InsufficientStockException> insufficientStockExceptions = new ArrayList<>();
+
+        for (StockReductionRequest request : stockReductionRequests) {
+            Optional<Stock> existingStockOpt = stockRepository.findByIdProducto(request.getProductId());
+
+            if (existingStockOpt.isEmpty()) {
+                throw ResourceNotFoundException.builder()
+                        .errorMessageKey("Stock no encontrado por el id del producto proporcionado: " + request.getProductId())
+                        .build();
+            }
+
+            Stock existingStock = existingStockOpt.get();
+
+            if (request.getSaleQuantity() > existingStock.getExistencia()) {
+                InsufficientStockException insufficientStockException = InsufficientStockException.builder()
+                        .message("El stock es insuficiente para cubrir la venta del producto: " + existingStock.getProducto().getNombre())
+                        .errorMessageKey("error.stock.insuficiente")
+                        .addAdditionalInformation("existenciaActual", existingStock.getExistencia())
+                        .addAdditionalInformation("productId", existingStock.getIdProducto())
+                        .productName(existingStock.getProducto().getNombre())
+                        .build();
+
+                insufficientStockExceptions.add(insufficientStockException);
+            } else {
+                existingStock.setExistencia(existingStock.getExistencia() - request.getSaleQuantity());
+                existingStock.setFechaActualizacion(LocalDateTime.now());
+                updatedStocks.add(existingStock);
+            }
+        }
+
+        if (!insufficientStockExceptions.isEmpty()) {
+            throw new MultipleInsufficientStockException(insufficientStockExceptions);
+        }
+
+        return stockRepository.saveAll(updatedStocks);
+    }
+
+    public Optional<Stock> findStockByProductId(final Integer idProducto) {
+        return stockRepository.findByIdProducto(idProducto);
     }
 }
