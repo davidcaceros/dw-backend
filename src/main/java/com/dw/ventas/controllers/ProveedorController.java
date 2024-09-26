@@ -30,7 +30,7 @@ public class ProveedorController {
         return new ResponseEntity<>(nuevopoveedor, HttpStatus.CREATED);
     }
 
-    @GetMapping("/findbyid")
+    @GetMapping("/findbyid/{id}")
     public ResponseEntity<Proveedor> getProveedorId(@PathVariable Integer id) {
         final Optional<Proveedor> proveedor = proveedorService.findProveedorById(id);
         return proveedor.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
@@ -42,7 +42,7 @@ public class ProveedorController {
         return ResponseEntity.ok(proveedores);
     }
 
-    @PutMapping("/update")
+    @PutMapping("/update/{id}")
     public ResponseEntity<Proveedor> updatePersona(@PathVariable Integer id, @Valid @RequestBody ProveedorRequest request) {
         final Proveedor proveedorActualizada = proveedorService.updateProveedor(id, request);
         return ResponseEntity.ok(proveedorActualizada);
